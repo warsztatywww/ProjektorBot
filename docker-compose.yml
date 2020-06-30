@@ -1,0 +1,15 @@
+version: '2'
+
+volumes:
+  projektor_data:
+
+services:
+  projektor:
+    build: .
+    stdin_open: true
+    tty: true
+    environment:
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
+      - MEME_DIR=/data/memes
+    volumes:
+      - projektor_data:/data:rw

@@ -1,0 +1,1 @@
+ffmpeg -loop 1 -r 10 -i bootscreen.png -vf fade=in:0:50 -t 00:00:10 bootscreen.gif
