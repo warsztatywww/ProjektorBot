@@ -137,7 +137,7 @@ async def on_message(message):
                 with open(os.path.join(MEME_DIR, "DISCORD_{}_{}".format(attach.id, attach.filename)), "wb") as f:
                     await attach.save(f)
                 await message.add_reaction("🎺")
-                await message.channel.send('@everyone :trumpet: NOWY MEM :trumpet:', tts=True)
+                await message.channel.send('@here :trumpet: NOWY MEM :trumpet:', tts=True)
                 if projector_task:
                     projector_task.cancel()
                     if projector_msg:
