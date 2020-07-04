@@ -74,9 +74,12 @@ async def poweroff_button(channel):
             await projector_msg.delete()
             projector_msg = None
 
+        await client.change_presence(status=discord.Status.idle, activity=discord.Game(name='Czekanie na memy'))
+
 @client.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
+    await client.change_presence(status=discord.Status.idle, activity=discord.Game(name='Czekanie na memy'))
 
 @client.event
 async def on_reaction_add(reaction, user):
@@ -84,11 +87,11 @@ async def on_reaction_add(reaction, user):
     if user == client.user:
         return
     if projector_msg and reaction.message.id == projector_msg.id and isinstance(reaction.emoji, discord.Emoji) and reaction.emoji.name == 'projector_power':
-        await poweroff_button(reaction.message.channel)
         await reaction.remove(user)
+        await poweroff_button(reaction.message.channel)
     if turnoff_msg and reaction.message.id == turnoff_msg.id and isinstance(reaction.emoji, discord.Emoji) and reaction.emoji.name == 'projector_power':
-        await poweroff_button(reaction.message.channel)
         await reaction.remove(user)
+        await poweroff_button(reaction.message.channel)
     if turnoff_msg and reaction.message.id == turnoff_msg.id and isinstance(reaction.emoji, discord.Emoji) and reaction.emoji.name == 'projector_any':
         turnoff_task.cancel()
         turnoff_task = None
@@ -120,6 +123,7 @@ async def on_message(message):
                 projector_channel = message.channel
                 projector_msg = await message.channel.send(file=discord.File('bootscreen.gif'))
                 projector_task = asyncio.create_task(projector())
+                await client.change_presence(status=discord.Status.online, activity=discord.Game(name='Włączony!'))
             elif projector_channel != message.channel:
                 await message.channel.send('Przed przeniesieniem projektora do innego pokoju musisz go odłączyć od prądu...')
             else:
