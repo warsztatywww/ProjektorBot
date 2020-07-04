@@ -76,6 +76,20 @@ async def poweroff_button(channel):
 
         await client.change_presence(status=discord.Status.idle, activity=discord.Game(name='Czekanie na memy'))
 
+async def power_button(message):
+    global projector_channel, projector_msg, projector_task
+    if not projector_channel:
+        projector_channel = message.channel
+        projector_msg = await message.channel.send(file=discord.File('bootscreen.gif'))
+        projector_task = asyncio.create_task(projector())
+        await client.change_presence(status=discord.Status.online, activity=discord.Game(name='📽️ Włączony!'))
+    elif projector_channel != message.channel:
+        await message.channel.send('Przed przeniesieniem projektora do innego pokoju musisz go odłączyć od prądu...')
+    else:
+        await poweroff_button(message.channel)
+    await message.delete()
+
+
 @client.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
@@ -119,20 +133,15 @@ async def on_message(message):
 
     if client.user in message.mentions:
         if any(wordsearch(w, message.content) for w in ('włącz', 'wyłącz', 'on', 'off', 'power', 'zasilanie', 'włącznik')):
-            if not projector_channel:
-                projector_channel = message.channel
-                projector_msg = await message.channel.send(file=discord.File('bootscreen.gif'))
-                projector_task = asyncio.create_task(projector())
-                await client.change_presence(status=discord.Status.online, activity=discord.Game(name='Włączony!'))
-            elif projector_channel != message.channel:
-                await message.channel.send('Przed przeniesieniem projektora do innego pokoju musisz go odłączyć od prądu...')
-            else:
-                await poweroff_button(message.channel)
-            await message.delete()
+            await power_button(message)
         else:
             await message.channel.send('gdzie mi z tymi paluchami brudnymi od tostów do projektora')
 
     if message.channel.name == "memy":
+        emojis = re.finditer(r'<:(\w*):(\d*)>', message.content)
+        if any(emoji[1] == "projector_power" for emoji in emojis):
+            await power_button(message)
+
         for attach in message.attachments:
             if attach.filename.startswith("quack"):
                 await message.add_reaction("🦆")
