@@ -119,17 +119,24 @@ async def on_message(message):
     if message.author == client.user:
         return
 
+    sent_meme = False
+    
     if "kaczki" in message.content.lower():
         await message.add_reaction("🦆")
         if client.user in message.mentions:
             msg = await message.channel.send(file=discord.File("./quack.mp4-q38Y5FLK63k.mp4"))
             await msg.add_reaction("🦆")
+            sent_meme = True
             
     if any(wordsearch(w, message.content) for w in ('kurki', 'kurkom', 'jajka', 'farmio', 'kur', 'GMO')):
         await message.add_reaction("🥚")
         if client.user in message.mentions:
             msg = await message.channel.send(file=discord.File(os.path.join("./farmio", random.choice(os.listdir("./farmio")))))
-            await msg.add_reaction("🦆")
+            await msg.add_reaction("🥚")
+            sent_meme = True
+    
+    if sent_meme:
+        return
 
     if message.channel.type is discord.ChannelType.private:
         print('SECURITY NOTICE: {} tried to steal the PROJEKTOR'.format(message.author))
