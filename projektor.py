@@ -122,13 +122,13 @@ async def on_message(message):
     if "kaczki" in message.content.lower():
         await message.add_reaction("🦆")
         if client.user in message.mentions:
-            msg = await projector_channel.send(file=discord.File("./quack.mp4-q38Y5FLK63k.mp4"))
+            msg = await message.channel.send(file=discord.File("./quack.mp4-q38Y5FLK63k.mp4"))
             await msg.add_reaction("🦆")
             
     if any(wordsearch(w, message.content) for w in ('kurki', 'kurkom', 'jajka', 'farmio', 'kur', 'GMO')):
         await message.add_reaction("🥚")
         if client.user in message.mentions:
-            msg = await projector_channel.send(file=discord.File(os.path.join("./farmio", random.choice(os.listdir("./farmio")))))
+            msg = await message.channel.send(file=discord.File(os.path.join("./farmio", random.choice(os.listdir("./farmio")))))
             await msg.add_reaction("🦆")
 
     if message.channel.type is discord.ChannelType.private:
